@@ -1,0 +1,17 @@
+# Raw and processed data (too large for git)
+data/raw/
+data/processed/
+
+# Keep metadata (small JSON files, useful to track)
+!data/metadata/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db

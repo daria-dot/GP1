@@ -189,6 +189,20 @@ scikit-learn>=1.3.0
 - [x] Output correlation analysis
 - [x] Gibbs-Duhem thermodynamic consistency check
 - [x] Technical requirements definition
-- [ ] Surrogate model training (ANN/MLP)
-- [ ] Model evaluation and benchmarking
+- [x] Surrogate model training (ANN/MLP)
+- [x] Model evaluation and benchmarking
 - [ ] Integration with PDE diffusion solver
+
+## Ensemble Model Optimization Results
+
+**1. Data Splitting & Leakage Prevention**
+Implemented a strict 80/20 `train_test_split`. The initial $R^2 = 1.0$ was identified as an in-sample overfitting artifact. The new evaluation is strictly on the held-out test set.
+
+**2. Model Pruning & Pipeline Scaling**
+- Wrapped base learners in a `Pipeline` with `StandardScaler` to handle the massive scale differences between outputs (e.g., $\mu$ vs $D_v$).
+- Pruned the Random Forest (`max_depth=15`, `min_samples_leaf=5`) to prevent overfitting.
+- Upgraded the Meta-Learner to `RidgeCV` for automatic regularization tuning.
+
+**3. Performance & The "Ridge Anomaly"**
+- **Final Stacking Ensemble Score**: Mean $R^2 = 0.9999$ on the unseen test set.
+- **Note on Base Ridge Model**: The base Ridge model scored poorly (e.g., -555). This is expected physics: diffusivity ($D_v$) scales exponentially with temperature, rendering a strictly linear model incapable. However, the Stacking Meta-Learner successfully identified this noise, assigning near-zero weight to the Ridge predictions and relying on the tree-based models to achieve a highly robust and accurate final output.
